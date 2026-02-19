@@ -16,7 +16,7 @@ all_data = []
 page = 1
 
 while True:
-    url = f"https://www.cardrush-pokemon.jp/product-list?page={page}"
+    url = f"https://www.cardrush-pokemon.jp/buy/product-list?page={page}"
     headers = {"User-Agent": "Mozilla/5.0"}
     try:
         res = requests.get(url, headers=headers, timeout=30)
