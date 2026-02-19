@@ -27,7 +27,7 @@ try:
     while True:
         url = "https://www.cardrush-pokemon.jp/product-list?page=" + str(page)
         driver.get(url)
-        time.sleep(3)
+        time.sleep(5)
         soup = BeautifulSoup(driver.page_source, "html.parser")
         items = soup.select(".item_box")
         if not items:
@@ -52,7 +52,7 @@ try:
             all_data.append({"name": clean_name, "rarity": rarity, "state": state, "stock": stock_status, "price": price, "buy_price": buy_price})
         print("page " + str(page) + " done total=" + str(len(all_data)))
         page += 1
-        time.sleep(2)
+        time.sleep(4)
         if page > 9999:
             break
 except Exception as e:
