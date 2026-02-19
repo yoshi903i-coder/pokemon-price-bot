@@ -3,6 +3,7 @@ from bs4 import BeautifulSoup
 import pandas as pd
 from datetime import datetime
 import os
+import subprocess
 
 today = datetime.now().strftime("%Y-%m-%d %H:%M")
 all_data = []
@@ -37,3 +38,9 @@ else:
     df = df_new
 df.to_excel(excel_path, index=False)
 print(f"完了！{len(all_data)}件取得しました")
+
+subprocess.run(["git", "config", "user.email", "bot@example.com"])
+subprocess.run(["git", "config", "user.name", "PriceBot"])
+subprocess.run(["git", "add", "card_prices.xlsx"])
+subprocess.run(["git", "commit", "-m", f"価格更新 {today}"])
+subprocess.run(["git", "push"])
