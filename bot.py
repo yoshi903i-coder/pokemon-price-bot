@@ -1,32 +1,39 @@
 import requests
 from bs4 import BeautifulSoup
-import csv
+import pandas as pd
+from datetime import datetime
+import os
 
-# 調べたいURL（例：カードラッシュのポケカページ）
-url = "https://www.cardrush-pokemon.jp/product-list"
+today = datetime.now().strftime("%Y-%m-%d %H:%M")
+all_data = []
+page = 1
 
-response = requests.get(url)
-soup = BeautifulSoup(response.text, "html.parser")
+while True:
+    url = f"https://www.cardrush-pokemon.jp/product-list?page={page}"
+    headers = {"User-Agent": "Mozilla/5.0"}
+    res = requests.get(url, headers=headers)
+    soup = BeautifulSoup(res.text, "html.parser")
 
-cards = soup.find_all("div", class_="product-item")
+    items = soup.select(".item_box")
+    if not items:
+        break
 
-data = []
+    for item in items:
+        name_el = item.select_one(".item_name")
+        price_el = item.select_one(".price")
+        stock_el = item.select_one(".soldout")
 
-for card in cards:
-    name = card.find("h3").text.strip()
-    price = card.find("span", class_="price").text.strip()
-    
-    stock = "在庫あり"
-    if "在庫切れ" in card.text:
-        stock = "在庫切れ"
-    
-    print(name, price, stock)
-    data.append([name, price, stock])
+        name = name_el.text.strip() if name_el else "不明"
+        price = price_el.text.strip().replace("¥","").replace(",","").replace("円","").strip() if price_el else "0"
+        stock = "在庫切れ" if stock_el else "在庫あり"
 
-# CSV保存
-with open("card_prices.csv", "w", newline="", encoding="utf-8") as f:
-    writer = csv.writer(f)
-    writer.writerow(["カード名", "価格", "在庫"])
-    writer.writerows(data)
+        all_data.append([today, name, price, stock])
 
-print("完了！")
+    page += 1
+    if page > 100:
+        break
+
+df_new = pd.DataFrame(all_data, columns=["日時","カード名","価格","在庫"])
+
+excel_path = "card_prices.xlsx"
+if os.path.exists(excel_path):
