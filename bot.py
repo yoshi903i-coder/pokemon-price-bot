@@ -60,9 +60,11 @@ while True:
             })
         print(f"ページ{page} 完了 合計{len(all_data)}件")
         page += 1
-    except Exception as e:
+     except Exception as e:
         print(f"ページ{page} エラー: {e}")
-        break
+        page += 1
+        if page > 9999:
+            break
 
 print(f"取得完了: {len(all_data)}件")
 
